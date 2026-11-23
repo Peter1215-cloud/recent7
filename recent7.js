@@ -1,12 +1,12 @@
 // recent7.js：照 rules.md 寫的版本
 // 輸入：records＝一串紀錄，每筆像 { log_date: '2026-11-23', minutes: 30 }（minutes 可能是 null）
 //       today＝今天的日期，例如 '2026-11-23'
-// 輸出：{ minutes: 總共幾分鐘, count: 幾筆 }
+// 輸出：{ minutes: 總共幾分鐘, count: 幾筆, days: 幾天 }
 // 格式說明在 README.md；要怎麼算看 rules.md。
 
 function recent7(records, today) {
   if (!Array.isArray(records) || !today) {
-    return { minutes: 0, count: 0 };
+    return { minutes: 0, count: 0, days: 0 };
   }
 
   var parts = today.split('-');
@@ -15,6 +15,7 @@ function recent7(records, today) {
 
   var minutes = 0;
   var count = 0;
+  var validDates = {};
 
   for (var i = 0; i < records.length; i++) {
     var record = records[i];
@@ -40,8 +41,14 @@ function recent7(records, today) {
     if (diffDays >= 0 && diffDays < 7) {
       minutes += record.minutes;
       count += 1;
+      validDates[record.log_date] = true;
     }
   }
 
-  return { minutes: minutes, count: count };
+  return {
+    minutes: minutes,
+    count: count,
+    days: Object.keys(validDates).length
+  };
 }
+
