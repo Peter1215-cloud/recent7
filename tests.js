@@ -192,3 +192,49 @@ addCase({
   ],
   expect: { minutes: 0, count: 0 }
 });
+
+
+// ----------------------------------------------------
+// 規則 7：多回報一個欄位 days，計算這 7 天內「有至少一筆有效學習紀錄」的不重複天數；
+// 若該天只有無效紀錄（如未填分鐘或少於 5 分鐘），則該天不計入 days，沒有任何有效紀錄時回傳 0。
+// ----------------------------------------------------
+
+addCase({
+  name: '規則 7：同一天有多筆有效紀錄，days 只算 1 天',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-20', minutes: 30 },
+    { log_date: '2026-11-20', minutes: 40 }
+  ],
+  expect: { days: 1 }
+});
+
+addCase({
+  name: '規則 7：只有無效紀錄（未填分鐘或少於 5 分鐘）的天數不計入 days',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-21', minutes: null },
+    { log_date: '2026-11-22', minutes: 4 },
+    { log_date: '2026-11-23', minutes: 0 }
+  ],
+  expect: { days: 0 }
+});
+
+addCase({
+  name: '規則 7：沒有任何紀錄（空陣列）時，days 回傳 0',
+  today: '2026-11-23',
+  records: [],
+  expect: { days: 0 }
+});
+
+addCase({
+  name: '規則 7：跨多天有效紀錄與無效紀錄混合，正確計算不重複有效天數',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-21', minutes: 30 },
+    { log_date: '2026-11-22', minutes: 20 },
+    { log_date: '2026-11-22', minutes: 15 },
+    { log_date: '2026-11-23', minutes: 3 }
+  ],
+  expect: { days: 2 }
+});
